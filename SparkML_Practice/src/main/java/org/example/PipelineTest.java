@@ -23,7 +23,7 @@ public class PipelineTest {
                 .getOrCreate();
 
         Dataset<Row> data = spark.read().format("csv").option("header", "true").option("inferSchema", true)
-                .load("/home/elidor/Documents/Notebooks/scaledInsurance.csv");
+                .load("SparkML_Practice/insurance.csv");
         data.show(5);
         data.columns();
         //data = data.withColumn("charges", data.col("charges").cast("double"));
@@ -82,14 +82,25 @@ public class PipelineTest {
                 .setLabelCol("charges")
                 .setPredictionCol("prediction")
                 .setMetricName("rmse");
+        RegressionEvaluator mse = new RegressionEvaluator()
+                .setLabelCol("label")
+                .setPredictionCol("prediction")
+                .setMetricName("mse");
+        RegressionEvaluator mae = new RegressionEvaluator()
+                .setLabelCol("label")
+                .setPredictionCol("prediction")
+                .setMetricName("mae");
         double r2 = evaluator.evaluate(predictions);
         double rmsed = rmse.evaluate(predictions);
+        double msed = mse.evaluate(predictions);
+        double maed = mae.evaluate(predictions);
 
 
 
         System.out.println("R2 Score on test data = " + r2);
         System.out.println("Root Mean Squared Error (RMSE) on test data = " + rmsed);
-
+        System.out.println(" Mean Squared Error (MSE) on test data = " + msed);
+        System.out.println("Mean absolute error: "+ maed);
 
 
 

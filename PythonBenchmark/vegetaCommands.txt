@@ -1,0 +1,5 @@
+vegeta attack -duration=60s -rate=1000 -targets=targets.txt -output=results.bin
+
+vegeta report results.bin
+
+vegeta plot -title=Results results.bin > results-plot.html

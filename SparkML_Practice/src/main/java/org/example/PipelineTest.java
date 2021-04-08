@@ -1,12 +1,10 @@
 package org.example;
-import org.apache.spark.ml.Pipeline;
+
+
 import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.PipelineStage;
 import org.apache.spark.ml.evaluation.RegressionEvaluator;
 import org.apache.spark.ml.feature.*;
-import org.apache.spark.ml.regression.DecisionTreeRegressionModel;
-import org.apache.spark.ml.regression.DecisionTreeRegressor;
-import org.apache.spark.ml.regression.GBTRegressor;
 import org.apache.spark.ml.regression.RandomForestRegressor;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -82,26 +80,15 @@ public class PipelineTest {
                 .setLabelCol("charges")
                 .setPredictionCol("prediction")
                 .setMetricName("rmse");
-        RegressionEvaluator mse = new RegressionEvaluator()
-                .setLabelCol("label")
-                .setPredictionCol("prediction")
-                .setMetricName("mse");
-        RegressionEvaluator mae = new RegressionEvaluator()
-                .setLabelCol("label")
-                .setPredictionCol("prediction")
-                .setMetricName("mae");
+
         double r2 = evaluator.evaluate(predictions);
         double rmsed = rmse.evaluate(predictions);
-        double msed = mse.evaluate(predictions);
-        double maed = mae.evaluate(predictions);
+
 
 
 
         System.out.println("R2 Score on test data = " + r2);
         System.out.println("Root Mean Squared Error (RMSE) on test data = " + rmsed);
-        System.out.println(" Mean Squared Error (MSE) on test data = " + msed);
-        System.out.println("Mean absolute error: "+ maed);
-
 
 
     }

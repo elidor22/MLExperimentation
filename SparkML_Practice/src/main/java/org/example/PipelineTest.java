@@ -20,8 +20,9 @@ public class PipelineTest {
                 .appName("test")
                 .getOrCreate();
 
+
         Dataset<Row> data = spark.read().format("csv").option("header", "true").option("inferSchema", true)
-                .load("SparkML_Practice/insurance.csv");
+                .load("/home/elidor/Documents/Notebooks/scaledInsurance.csv");
         data.show(5);
         data.columns();
         //data = data.withColumn("charges", data.col("charges").cast("double"));
@@ -55,7 +56,7 @@ public class PipelineTest {
 
 // Train a DecisionTree model.
         RandomForestRegressor dt = new RandomForestRegressor()
-                .setFeaturesCol("features").setLabelCol("charges").setNumTrees(180).setMaxDepth(30).setMaxBins(300);
+                .setFeaturesCol("features").setLabelCol("charges").setNumTrees(99).setMaxDepth(30).setMaxBins(205);
 
         //TODO:Implement a scaler for the output column and transform the scaled values back to primitive double as required
         // Chain indexer and tree in a Pipeline.
@@ -71,7 +72,7 @@ public class PipelineTest {
 // Select example rows to display.
         predictions.select("charges", "features").show(5);
 
-// Test how good the prediction metrics are
+// Generate model metrics
         RegressionEvaluator evaluator = new RegressionEvaluator()
                 .setLabelCol("charges")
                 .setPredictionCol("prediction")
@@ -80,15 +81,25 @@ public class PipelineTest {
                 .setLabelCol("charges")
                 .setPredictionCol("prediction")
                 .setMetricName("rmse");
-
+        RegressionEvaluator mse = new RegressionEvaluator()
+                .setLabelCol("charges")
+                .setPredictionCol("prediction")
+                .setMetricName("mse");
+        RegressionEvaluator mae = new RegressionEvaluator()
+                .setLabelCol("charges")
+                .setPredictionCol("prediction")
+                .setMetricName("mae");
         double r2 = evaluator.evaluate(predictions);
         double rmsed = rmse.evaluate(predictions);
+        double msed = mse.evaluate(predictions);
+        double maed = mae.evaluate(predictions);
 
 
-
-
+        //Print the metrics
         System.out.println("R2 Score on test data = " + r2);
         System.out.println("Root Mean Squared Error (RMSE) on test data = " + rmsed);
+        System.out.println(" Mean Squared Error (MSE) on test data = " + msed);
+        System.out.println("Mean absolute error: "+ maed);
 
 
     }

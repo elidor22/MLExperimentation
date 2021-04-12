@@ -1,6 +1,8 @@
 package org.example;
 
 
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.ml.PipelineStage;
 import org.apache.spark.ml.evaluation.RegressionEvaluator;
 import org.apache.spark.ml.feature.StandardScaler;
@@ -26,6 +28,8 @@ public class GridSearch {
                     .config("spark.master", "local[*]")
                     .appName("GridSearch")
                     .getOrCreate();
+
+
 
             Dataset<Row> data = spark.read().format("csv").option("header", "true").option("inferSchema", true)
                     .load("SparkML_Practice/insurance2.csv");
@@ -74,9 +78,9 @@ public class GridSearch {
 
 
             ParamMap[] paramGrid = new ParamGridBuilder()
-                    .addGrid(dt.numTrees(), new int[] {10, 15, 25})
-                    .addGrid(dt.maxDepth(), new int[]{25, 30})
-                    .addGrid(dt.maxBins(),new int[]{ 75, 144} )
+                    .addGrid(dt.numTrees(), new int[] {105, 157, 250,45,55,98,99,300})
+                    .addGrid(dt.maxDepth(), new int[]{18,25, 30})
+                    .addGrid(dt.maxBins(),new int[]{ 75, 144,188, 205} )
                     .build();
 
             // We now treat the Pipeline as an Estimator, wrapping it in a CrossValidator instance.
@@ -89,7 +93,7 @@ public class GridSearch {
                     .setEvaluator(new RegressionEvaluator())
                     .setEstimatorParamMaps(paramGrid)
                     .setNumFolds(10)  // Use 3+ in practice
-                    .setParallelism(3);  // Evaluate up to 2 parameter settings in parallel
+                    .setParallelism(25);  // Evaluate up to 2 parameter settings in parallel
 
             // Run cross-validation, and choose the best set of parameters.
             CrossValidatorModel cvModel = cv.fit(trainingData);
